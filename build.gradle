@@ -1,7 +1,16 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
 allprojects {
     apply plugin: 'scala'
     apply plugin: 'application'
     apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     project.group = 'org.matruss'
 
@@ -70,6 +79,12 @@ allprojects {
         minHeapSize = "1G"
         maxHeapSize = "4G"
         jvmArgs "-XX:MaxPermSize=1024m"
+    }
+    shadowJar {
+        baseName = project.name
+        classifier = ''
+        dependencies { exclude 'META-INF/**' }
+        append("reference.conf")
     }
 }
 
