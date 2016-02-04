@@ -8,10 +8,10 @@ object RoadMap extends Directives {
 
   val BurnerRoad = {
     path("burner"/"report") {
-      post { complete { HttpResponse(OK) } }
+      get { complete { HttpResponse(OK) } }
     } ~
     path("burner"/"event") {
-      get { complete { HttpResponse(OK) } }
+      post { complete { HttpResponse(OK) } }
     }
   }
 

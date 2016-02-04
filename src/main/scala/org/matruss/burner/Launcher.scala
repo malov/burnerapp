@@ -30,8 +30,8 @@ object Launcher extends App {
       zoo.actorOf( Props(classOf[HttpListenerActor], RoadMap.BurnerRoad), "burnerlistener" )
       log.info("HttpListener actor tracking Burner is up")
 
-      zoo.actorOf( Props(classOf[HttpListenerActor], RoadMap.DropboxRoad), "burnerlistener" )
-      log.info("HttpListener actor tracking Dropbox is up")
+      //zoo.actorOf( Props(classOf[HttpListenerActor], RoadMap.DropboxRoad), "dplistener" )
+      //log.info("HttpListener actor tracking Dropbox is up")
     }
     case None => lastRites(1,"Failed to parse input parameters, exiting ..." )
   }
@@ -63,7 +63,7 @@ object Defaults {
   // waiting time for terminating all actors
   val TerminationTimeoutDefault = 2000.milliseconds
   // default HTTP server endpoint
-  val InterfaceHost = "0.0.0.0"
+  val InterfaceHost = "localhost"
   // default HTTP server port
   val InterfacePort = 10080
   // default root path for Visto REST interface
