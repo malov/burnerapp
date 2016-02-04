@@ -13,7 +13,7 @@ import net.ceedubs.ficus.Ficus._
 
 import scala.util.control.NonFatal
 
-class BurnerListenerActor extends Actor with ImplicitMaterializer {
+class HttpListenerActor(val roads:Route) extends Actor with ImplicitMaterializer {
 
   import Defaults._
 
@@ -28,12 +28,10 @@ class BurnerListenerActor extends Actor with ImplicitMaterializer {
   import akka.event.Logging
   implicit def log = Logging(system, this)
 
-  private[this] val interface = conf.as[Option[String]]("visto.server").getOrElse(InterfaceHost)
-  private[this] val port = conf.as[Option[Int]]("visto.port").getOrElse(InterfacePort)
+  private[this] val interface = conf.as[Option[String]]("burner.server").getOrElse(InterfaceHost)
+  private[this] val port = conf.as[Option[Int]]("burner.port").getOrElse(InterfacePort)
   private[this] val startupTimeout =
-    conf.as[Option[FiniteDuration]]("visto.startup_timeout").getOrElse(StartupTimeout)
-
-  def roads:Route = null
+    conf.as[Option[FiniteDuration]]("burner.startup_timeout").getOrElse(StartupTimeout)
 
   try {
     Await.result(Http().bindAndHandle(roads, interface, port), startupTimeout)
