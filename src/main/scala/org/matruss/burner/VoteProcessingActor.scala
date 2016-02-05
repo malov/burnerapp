@@ -1,7 +1,6 @@
 package org.matruss.burner
 
 import akka.actor.{Status, Actor}
-import akka.pattern.pipe
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding
@@ -122,8 +121,8 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     }
     case FetchPictureList(_) => {
       cache = syncLight
-      val list:Seq[Picture] = cache map { case(k,v) => Picture(k,v) } toSeq
-      sender() ! PictureSeq(list)
+      val list = cache map { case(k,v) => Picture(k,v) }
+      sender() ! PictureSeq( list.toSeq )
     }
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
