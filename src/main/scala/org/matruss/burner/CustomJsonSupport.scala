@@ -12,3 +12,15 @@ object PictureJson extends DefaultJsonProtocol with SprayJsonSupport {
 object BurnerEventJson extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val clientFormat = jsonFormat4(BurnerEvent)
 }
+
+object DpPhotoInfoJson extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val clientFormat = jsonFormat2(DpPhotoInfo)
+}
+
+object DpPictureJson extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val clientFormat = jsonFormat13(DpPicture)
+}
+
+object DpFolderJson extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val clientFormat = jsonFormat12(DpFolder)
+}
