@@ -4,6 +4,7 @@ import akka.actor.{Status, Actor}
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding
+import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpResponse, HttpRequest}
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
@@ -51,13 +52,16 @@ import scala.concurrent.{Await, Future}
  all together but this is sound a bit too convoluted for test application.
 */
 
-class VoteProcessingActor extends Actor with ImplicitMaterializer {
+class VoteProcessingActor(token:String) extends Actor with ImplicitMaterializer {
 
   import Defaults._
 
   implicit def conf = context.system.settings.config.getConfig(Root)
   implicit val system = context.system
   implicit val ec = context.dispatcher
+
+  import akka.event.Logging
+  implicit def log = Logging(system, this)
 
   private[this] val dpHost =
     conf.as[Option[String]]("dropbox.server").getOrElse(DropboxHost)
@@ -74,10 +78,16 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     def dpRequest(req:HttpRequest):Future[HttpResponse] =
       Source.single(req).via(dpConnection).runWith(Sink.head)
 
-    dpRequest( RequestBuilding.Get(dpPath) ) flatMap { rsp =>
+    val request = RequestBuilding.Get(dpPath).withHeaders(RawHeader("Authorization:Bearer", token))
+    log.info("Headers: {}", request.headers.mkString("\n"))
+    log.info("Request URI: {}", request.getUri().toString)
+    dpRequest( request ) flatMap { rsp =>
       rsp.status match {
         case OK => Unmarshal(rsp.entity).to[String]
-        case _ => Future.failed(new RuntimeException("Error"))
+        case x => {
+          log.error("Connection failed with status {}, message {}", x, rsp.entity.toString )
+          Future.failed(new RuntimeException("Error"))
+        }
       }
     }
   }
@@ -127,6 +137,7 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
 
+  // todo ! causing actor fail at start up
   override def preStart(): Unit = { cache = syncDeep }
 
   // todo ! need to add shutdown hook to properly save cache

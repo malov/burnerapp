@@ -41,7 +41,7 @@ object Launcher extends App {
       zoo.actorOf( Props(classOf[HttpListenerActor] ), "listener" )
       log.info("HttpListener actor tracking Burner is up")
 
-      zoo.actorOf( Props(classOf[VoteProcessingActor] ), "voter" )
+      zoo.actorOf( Props(classOf[VoteProcessingActor], getToken ), "voter" )
       log.info("VoteProcessing actor is up")
     }
     case None => lastRites(1,"Failed to parse input parameters, exiting ..." )
@@ -59,6 +59,8 @@ object Launcher extends App {
     zoo.awaitTermination(TerminationTimeout)
     System.exit(code)
   }
+  // todo ! static token, need use OAth 2.0 to get it properly
+  private def getToken:String = "tldMiLmFgCAAAAAAAAAAD0-rY3ujyKrVgecMk6Xkrci4m1HnzxWpbAm4P5_cvEdi"
 }
 
 case class VotingAppParams( verbose:Boolean = false )
