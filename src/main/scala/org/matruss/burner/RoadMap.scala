@@ -49,7 +49,7 @@ trait RoadMap extends Directives {
   }
   private def produceError: PartialFunction[Throwable, HttpResponse] = {
     case NonFatal(cause) => HttpResponse(InternalServerError)
-    case cause => throw cause
+    case fatal:Throwable => throw fatal
   }
 }
 
