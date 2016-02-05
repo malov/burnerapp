@@ -11,7 +11,6 @@ import scala.concurrent.ExecutionContext
 import akka.util.Timeout
 import akka.pattern.ask
 
-
 trait RoadMap extends Directives {
 
   implicit def ec:ExecutionContext

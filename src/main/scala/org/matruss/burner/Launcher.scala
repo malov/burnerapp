@@ -9,6 +9,14 @@ import scopt.OptionParser
 
 import scala.concurrent.duration.FiniteDuration
 
+/*
+ 1. Unmarshalling from string to list of pictures
+ 2. Tests for RoadMap
+ 3. DONE : Comments and logic to explain
+ 4. Test for Vote actor
+ 5. Access token to dropbox request
+ 6. If can test : path to pictures might be wrong in Vote actor
+ */
 object Launcher extends App {
   
   import Defaults._
@@ -40,6 +48,7 @@ object Launcher extends App {
     val TerminationTimeout =
       conf.as[Option[FiniteDuration]]("actors.termination_timeout").getOrElse(TerminationTimeoutDefault)
 
+    // todo this way to terminate actor system is deprecated in 2.4, need to fix it
     zoo.shutdown()
     if (code > 0) log.error(message, Array(this.getClass.getSimpleName) )
     else log.info(message, Array(this.getClass.getSimpleName) )

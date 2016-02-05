@@ -12,6 +12,12 @@ import net.ceedubs.ficus.Ficus._
 
 import scala.util.control.NonFatal
 
+/*
+ I chose to define all the routing in a separate trait RoadMap. Reason is testability:
+ this actor doesn't receive any messages from outside world except through the HTTP
+ connections, all its behaviour is inside routing trait.
+*/
+
 class HttpListenerActor extends Actor with ImplicitMaterializer with RoadMap {
 
   import Defaults._
