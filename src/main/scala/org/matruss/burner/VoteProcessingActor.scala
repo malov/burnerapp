@@ -66,6 +66,8 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     conf.as[Option[Int]]("dropbox.port").getOrElse(DropboxPort)
   private[this] val dpPath =
     conf.as[Option[String]]("dropbox.path").getOrElse(DropboxPath)
+  private[this] val requestTimeout =
+    conf.as[Option[FiniteDuration]]("burner.startup_timeout").getOrElse(RequestTimeout)
 
   lazy val dpConnection = Http().outgoingConnection(dpHost,dpPort)
 
@@ -81,17 +83,28 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     }
   }
 
-  private[this] val requestTimeout =
-    conf.as[Option[FiniteDuration]]("burner.startup_timeout").getOrElse(RequestTimeout)
+  private[this] def getRemotes:Seq[String] = {
+    val fromDropbox = Await.result(fetchFromDropbox, requestTimeout)
 
-  private[this] def sync:Map[String,Int] = {
+    // get all the picture names from fromDropbox into Seq
+    val remotes:Seq[String] = ???
+    remotes
+  }
+
+  private[this] def syncLight:Map[String,Int] = {
+    val update = cache
+    getRemotes foreach { pic =>  if ( !update.contains(pic) ) update + (pic -> 0) }
+    update
+  }
+
+  private[this] def syncDeep:Map[String,Int] = {
     val update = cache
     val fromDropbox = Await.result(fetchFromDropbox, requestTimeout)
-    // get all the picture names from fromDropbox into Seq
-    val remotePictures:Seq[String] = ???
-    remotePictures foreach { pic =>
-      if ( !update.contains(pic) ) update + (pic -> 0)
-    }
+
+    val remotes:Seq[String] = getRemotes
+    update foreach { case(k,v) => if ( !remotes.contains(k) ) update - k }
+    remotes foreach { pic =>  if ( !update.contains(pic) ) update + (pic -> 0) }
+
     update
   }
 
@@ -99,7 +112,7 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
 
   def receive:Receive = {
     case StoreVote(pic,_) => {
-      cache = sync
+      cache = syncLight
       if ( cache.contains(pic) ) {
         val counter = cache.get(pic).get + 1
         cache + (pic -> counter)
@@ -111,11 +124,9 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
 
-  override def preStart(): Unit = {
+  override def preStart(): Unit = { cache = syncDeep }
 
-  }
-
-  // todo need to add shutdown hook
+  // todo ! need to add shutdown hook to properly save cache
 }
 
 sealed trait PictureRequests

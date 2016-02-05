@@ -10,12 +10,14 @@ import scopt.OptionParser
 import scala.concurrent.duration.FiniteDuration
 
 /*
- 1. Unmarshalling from string to list of pictures
- 2. Tests for RoadMap
- 3. DONE : Comments and logic to explain
- 4. Test for Vote actor
- 5. Access token to dropbox request
- 6. If can test : path to pictures might be wrong in Vote actor
+ 1. Refactor Voter logic
+ 2. Unmarshalling from string to list of pictures
+ 3. DONE : Tests for RoadMap
+ 4. DONE : Comments and logic to explain
+ 5. Test for Vote actor
+ 6. Access token to dropbox request
+ 7. If can test : path to pictures might be wrong in Vote actor
+ 8. Address overlooked todo's
  */
 object Launcher extends App {
   
