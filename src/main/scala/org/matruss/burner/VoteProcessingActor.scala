@@ -15,6 +15,8 @@ import net.ceedubs.ficus.Ficus._
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, Future}
 
+import spray.json._
+import DefaultJsonProtocol._
 /*
  This actor does two main things: interacts with Dropbox via API and updates picture
  voting information (in Dropbox as well).
@@ -93,11 +95,11 @@ class VoteProcessingActor(token:String) extends Actor with ImplicitMaterializer 
   }
 
   private[this] def getRemotes:Seq[String] = {
+    import DpFolderJson._
     val fromDropbox = Await.result(fetchFromDropbox, requestTimeout)
+    val folder = fromDropbox.parseJson.convertTo[DpFolder]
 
-    // get all the picture names from fromDropbox into Seq
-    val remotes:Seq[String] = ???
-    remotes
+    folder.contents map (_.path.split('/').last)
   }
 
   private[this] def syncLight:Map[String,Int] = {

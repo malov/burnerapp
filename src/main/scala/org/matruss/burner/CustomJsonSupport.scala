@@ -18,9 +18,12 @@ object DpPhotoInfoJson extends DefaultJsonProtocol with SprayJsonSupport {
 }
 
 object DpPictureJson extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val clientFormat = jsonFormat13(DpPicture)
+  implicit val photoFormat = jsonFormat2(DpPhotoInfo)
+  implicit val pictureFormat = jsonFormat13(DpPicture)
 }
 
 object DpFolderJson extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val clientFormat = jsonFormat12(DpFolder)
+  implicit val photoFormat = jsonFormat2(DpPhotoInfo)
+  implicit val pictureFormat = jsonFormat13(DpPicture)
+  implicit val folderFormat = jsonFormat12(DpFolder)
 }

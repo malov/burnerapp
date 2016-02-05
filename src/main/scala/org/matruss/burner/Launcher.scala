@@ -11,14 +11,15 @@ import scala.concurrent.duration.FiniteDuration
 
 /*
  1. DONE: Refactor Voter logic
- 2. Unmarshalling from string to list of pictures
+ 2. DONE: Unmarshalling from string to list of pictures
  3. DONE : Tests for RoadMap
  4. DONE : Comments and logic to explain
- 5. Account for external failures in vote actors
- 5. Test for Vote actor
- 6. Access token to dropbox request
- 7. If can test : path to pictures might be wrong in Vote actor
- 8. Address overlooked todo's
+ 5. Figure proper picture path at Dropbox
+ 6. Account for external failures in vote actors
+ 7. Test for Vote actor
+ 8. Access token to dropbox request
+ 9. If can test : path to pictures might be wrong in Vote actor
+ 10. Fix overlooked todo's
  */
 object Launcher extends App {
   
