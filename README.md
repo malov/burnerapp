@@ -14,6 +14,7 @@ or separately
 ```
 $ ./gradlew clean
 $ ./gradlew shadowJar
+    
 
 Resulting jar will be in build/libs directory
 
