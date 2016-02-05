@@ -10,7 +10,7 @@ import scopt.OptionParser
 import scala.concurrent.duration.FiniteDuration
 
 /*
- 1. Refactor Voter logic
+ 1. DONE: Refactor Voter logic
  2. Unmarshalling from string to list of pictures
  3. DONE : Tests for RoadMap
  4. DONE : Comments and logic to explain

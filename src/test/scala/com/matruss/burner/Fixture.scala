@@ -1,6 +1,7 @@
 package com.matruss.burner
 
-import akka.actor.{Status, Actor}
+import akka.actor.{ActorSystem, Status, Actor}
+import com.typesafe.config.ConfigFactory
 import org.matruss.burner._
 
 trait Fixture
@@ -18,6 +19,10 @@ class MockVoterActor extends Actor with Fixture {
     }
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
+}
+
+object MockActorSystem  {
+  def apply(name:String):ActorSystem = ActorSystem(name, ConfigFactory.load() )
 }
 
 object Fixture {

@@ -120,7 +120,7 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
       }
       else sender() ! Status.Failure
     }
-    case FetchPictureList(_) => fetchFromDropbox pipeTo sender()
+    case FetchPictureList(_) => fetchFromDropbox pipeTo sender() // todo not exactly right, need to add votes
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
 
