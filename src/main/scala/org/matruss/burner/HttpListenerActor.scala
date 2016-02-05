@@ -1,11 +1,10 @@
 package org.matruss.burner
 
-import akka.actor.Actor
+import akka.actor.{ActorSelection, Actor}
 import akka.actor.SupervisorStrategy.Restart
 import akka.http.scaladsl.Http
 import akka.stream.scaladsl.ImplicitMaterializer
 import akka.util.Timeout
-import akka.http.scaladsl.server._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -13,7 +12,7 @@ import net.ceedubs.ficus.Ficus._
 
 import scala.util.control.NonFatal
 
-class HttpListenerActor(val roads:Route) extends Actor with ImplicitMaterializer {
+class HttpListenerActor extends Actor with ImplicitMaterializer with RoadMap {
 
   import Defaults._
 
@@ -32,6 +31,8 @@ class HttpListenerActor(val roads:Route) extends Actor with ImplicitMaterializer
   private[this] val port = conf.as[Option[Int]]("burner.port").getOrElse(InterfacePort)
   private[this] val startupTimeout =
     conf.as[Option[FiniteDuration]]("burner.startup_timeout").getOrElse(StartupTimeout)
+
+  protected val voter:ActorSelection = context.actorSelection("/user/voter")
 
   try {
     Await.result(Http().bindAndHandle(roads, interface, port), startupTimeout)

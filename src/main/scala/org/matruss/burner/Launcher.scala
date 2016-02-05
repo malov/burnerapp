@@ -27,11 +27,11 @@ object Launcher extends App {
     case Some(params) => {
       log.info("Parameters parsed, starting up actor system ...")
 
-      zoo.actorOf( Props(classOf[HttpListenerActor], RoadMap.BurnerRoad), "burnerlistener" )
+      zoo.actorOf( Props(classOf[HttpListenerActor] ), "listener" )
       log.info("HttpListener actor tracking Burner is up")
 
-      //zoo.actorOf( Props(classOf[HttpListenerActor], RoadMap.DropboxRoad), "dplistener" )
-      //log.info("HttpListener actor tracking Dropbox is up")
+      zoo.actorOf( Props(classOf[VoteProcessingActor] ), "voter" )
+      log.info("VoteProcessing actor is up")
     }
     case None => lastRites(1,"Failed to parse input parameters, exiting ..." )
   }
