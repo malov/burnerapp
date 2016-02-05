@@ -120,7 +120,11 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
       }
       else sender() ! Status.Failure
     }
-    case FetchPictureList(_) => fetchFromDropbox pipeTo sender() // todo not exactly right, need to add votes
+    case FetchPictureList(_) => {
+      cache = syncLight
+      val list:Seq[Picture] = cache map { case(k,v) => Picture(k,v) } toSeq
+      sender() ! PictureSeq(list)
+    }
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
 

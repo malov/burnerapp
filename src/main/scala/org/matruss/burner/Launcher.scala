@@ -14,6 +14,7 @@ import scala.concurrent.duration.FiniteDuration
  2. Unmarshalling from string to list of pictures
  3. DONE : Tests for RoadMap
  4. DONE : Comments and logic to explain
+ 5. Account for external failures in vote actors
  5. Test for Vote actor
  6. Access token to dropbox request
  7. If can test : path to pictures might be wrong in Vote actor
