@@ -18,7 +18,7 @@ trait RoadMap extends Directives {
 
   protected def voter:ActorSelection
 
-  def roads:Route = {
+  def roads(testFailed:Boolean = false):Route = {
 
     import BurnerEventJson._
     import RoadMap._
@@ -26,7 +26,7 @@ trait RoadMap extends Directives {
     path("burner"/"report") {
       get {
         complete {
-          val q = voter ? FetchPictureList()
+          val q = voter ? FetchPictureList( testFailed )
           q.mapTo[PictureSeq].map( buildResponse ).recover( produceError )
         }
       }
@@ -36,7 +36,7 @@ trait RoadMap extends Directives {
         entity(as[BurnerEvent]) { ev =>
           ev.isText match {
             case true => complete {
-              voter ? StoreVote(ev.payload) map { _ => HttpResponse(OK) } recover { produceError }
+              voter ? StoreVote( ev.payload, testFailed ) map { _ => HttpResponse(OK) } recover { produceError }
             }
             case false => complete { HttpResponse(BadRequest) }
           }

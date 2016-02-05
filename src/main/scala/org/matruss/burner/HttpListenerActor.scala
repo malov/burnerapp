@@ -41,7 +41,7 @@ class HttpListenerActor extends Actor with ImplicitMaterializer with RoadMap {
   protected val voter:ActorSelection = context.actorSelection("/user/voter")
 
   try {
-    Await.result(Http().bindAndHandle(roads, interface, port), startupTimeout)
+    Await.result(Http().bindAndHandle(roads(), interface, port), startupTimeout)
     log.info("Burner HTTP service started listening to interface {}, port {}", interface, port)
   }
   catch {

@@ -110,6 +110,12 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
     case FetchPictureList(_) => fetchFromDropbox pipeTo sender()
     case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
+
+  override def preStart(): Unit = {
+
+  }
+
+  // todo need to add shutdown hook
 }
 
 sealed trait PictureRequests
