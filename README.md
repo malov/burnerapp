@@ -4,10 +4,13 @@
 I've chosen Gradle as a building tool for this project : historically we had problems with more traditional SBT for Scala project to build "fat jars" for our applications (that's the way how we ususally run them) - too many dependency merging conflicts. Gradle is more reliable  in this regard, IMHO, and on top of it I use shadow-jar plugin which deals nicely with differently version dependencies of the same artifact.
 
 To build the entire project, run the following commands from the root of the project:
+
 ```
 $ ./gradlew clean shadowJar
 ```
+
 or separately
+
 ```
 $ ./gradlew clean
 $ ./gradlew shadowJar

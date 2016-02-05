@@ -46,10 +46,10 @@ import scala.concurrent.{Await, Future}
  be applied.
  (2)  Any text message will be procesessed in the current settings, which
  means that any non-voting SMS would trigger cache sync. It is bad, however, I could
- not find a way around it : if key is missing it might just mean that picture have
- been added recently and after sync it could be found. Potentially we could track
- picture adding activity via media event catching, but this is sound a bit too
- convoluted for test application.
+ not find a way around it : if key (i.e payload SMS text) is missing it might just mean that
+ picture have been added recently and after sync it could be found. Potentially we
+ could track picture adding activity via media event catching, thus avoiding synching
+ all together but this is sound a bit too convoluted for test application.
 */
 
 class VoteProcessingActor extends Actor with ImplicitMaterializer {
@@ -98,7 +98,7 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
   private[this] var cache:Map[String,Int] = Map()
 
   def receive:Receive = {
-    case StoreVote(pic) => {
+    case StoreVote(pic,_) => {
       cache = sync
       if ( cache.contains(pic) ) {
         val counter = cache.get(pic).get + 1
@@ -107,11 +107,12 @@ class VoteProcessingActor extends Actor with ImplicitMaterializer {
       }
       else sender() ! Status.Failure
     }
-    case FetchPictureList() => fetchFromDropbox pipeTo sender()
+    case FetchPictureList(_) => fetchFromDropbox pipeTo sender()
+    case x => sender() ! Status.Failure( new RuntimeException("Unknown message"))
   }
 }
 
 sealed trait PictureRequests
 
-case class FetchPictureList() extends PictureRequests
-case class StoreVote(picture:String) extends PictureRequests
+case class FetchPictureList( testFailed:Boolean = false ) extends PictureRequests
+case class StoreVote( picture:String, testFailed:Boolean = false ) extends PictureRequests

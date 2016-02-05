@@ -65,6 +65,8 @@ allprojects {
         compile("net.ceedubs:ficus_${scalaLibVersion}:${ficusVersion}")
 
     	testCompile("junit:junit:${junitVersion}")
+        testCompile("com.typesafe.akka:akka-testkit_${scalaLibVersion}:${akkaVersion}")
+        testCompile("com.typesafe.akka:akka-http-testkit-experimental_${scalaLibVersion}:${akkaHttpVersion}")
     	testCompile("org.scalatest:scalatest_${scalaLibVersion}:${scalaTestVersion}")
 
     }
