@@ -40,7 +40,6 @@ object Launcher extends App {
     val TerminationTimeout =
       conf.as[Option[FiniteDuration]]("actors.termination_timeout").getOrElse(TerminationTimeoutDefault)
 
-    // todo fix deprecation warnings
     zoo.shutdown()
     if (code > 0) log.error(message, Array(this.getClass.getSimpleName) )
     else log.info(message, Array(this.getClass.getSimpleName) )
@@ -70,5 +69,10 @@ object Defaults {
   val RootHttpPath = "burner"
   // waiting time for inital server binding
   val StartupTimeout = 5000.millisecond
+  // dropbox request timeout
+  val RequestTimeout = 5.seconds
+  val DropboxHost = "api.dropboxapi.com"
+  val DropboxPort = 443
+  val DropboxPath = "/1/metadata/auto/Photos"
 }
 

@@ -6,17 +6,15 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.{Route, Directives}
 
 import scala.util.control.NonFatal
+import scala.concurrent.ExecutionContext
 
-// import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import akka.pattern.ask
 
-import scala.concurrent.ExecutionContext
 
 trait RoadMap extends Directives {
 
   implicit def ec:ExecutionContext
-  // implicit def materializer: ActorMaterializer
   implicit def timeout:Timeout
 
   protected def voter:ActorSelection
