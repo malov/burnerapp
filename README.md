@@ -1,3 +1,29 @@
+## Implementation notes
+
+### Build
+I've chosen Gradle as a building tool for this project : historically we had problems with more traditional SBT for Scala project to build "fat jars" for our applications (that's the way how we ususally run them) - too many dependency merging conflicts. Gradle is more reliable  in this regard, IMHO, and on top of it I use shadow-jar plugin which deals nicely with differently version dependencies of the same artifact.
+
+To build the entire project, run the following commands from the root of the project:
+
+```
+$ ./gradlew clean shadowJar
+```
+
+or separately
+
+```
+$ ./gradlew clean
+$ ./gradlew shadowJar
+```
+    
+Resulting jar will be in build/libs directory
+
+### Notes about chosen architecture
+
+I've chosen to use Akka and Akka-http for this project. Specifically, three major building blocks for this app are : two actors - one responsible for accepting connections from Burner, and the other one querying Dropbox and storing cache of data with picture voting statistics, plus launcher which deals with starting/stopping application and actors, authentication with Dropbox, and reading/passing along command-line options, if any. Splitting actions between two actors provide nice separation of concerns and decouples activity.
+Theoretically, it might be feasible for production-like application to separate caching of data into separate actor, but for this one I decided not to.
+More notes about specific actors can be found in comments
+
 # Picture voting application
 
 We'll be building a picture voting application with burner.

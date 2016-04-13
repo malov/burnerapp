@@ -1,0 +1,92 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+    }
+}
+
+allprojects {
+    apply plugin: 'scala'
+    apply plugin: 'application'
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    project.group = 'org.matruss'
+
+    ext {
+        versionProject = '0.1'
+
+        javaVersionCompliance = '1.8'
+
+        scalaVersion = '2.11.7'
+        scalaVersionNoBuild = '2.11'
+        scalaLibVersion = '2.11'
+        
+        scoptVersion = '3.3.0'
+        akkaVersion = '2.4.1'
+        akkaHttpVersion = '2.0.3'
+        ficusVersion = '1.1.2'
+        sprayJsonVersion ='1.3.2'
+
+        junitVersion = '4.12'
+        scalaTestVersion = '2.2.4'
+    }
+
+    sourceCompatibility = "${javaVersionCompliance}"
+    targetCompatibility = "${javaVersionCompliance}"
+
+    mainClassName = "org.matruss.burner.Launcher"
+    project.version = "${versionProject}"
+
+    repositories {
+        mavenCentral()
+        maven { url "http://oss.sonatype.org/content/repositories/releases" }
+        maven { url "http://conjars.org/repo" }
+        maven { url "http://clojars.org/repo" }
+        maven { url "http://repo.codahale.com/" }
+        maven { url "http://www.ibiblio.org/maven2/" }
+        maven { url "http://maven.twttr.com/" }
+    }
+    task wrapper(type: Wrapper) {  gradleVersion = '2.7' }
+    configurations {
+        scalalib
+        compile.extendsFrom scalalib
+    }
+    dependencies {
+        scalalib("org.scala-lang:scala-library:${scalaVersion}")
+
+        compile("com.typesafe.akka:akka-actor_${scalaLibVersion}:${akkaVersion}")
+        compile("com.typesafe.akka:akka-http-core-experimental_${scalaLibVersion}:${akkaHttpVersion}")
+        compile("com.typesafe.akka:akka-http-experimental_${scalaLibVersion}:${akkaHttpVersion}")
+        compile("io.spray:spray-json_${scalaLibVersion}:${sprayJsonVersion}")
+        compile("com.typesafe.akka:akka-http-spray-json-experimental_${scalaLibVersion}:${akkaHttpVersion}")
+    	compile("com.github.scopt:scopt_${scalaLibVersion}:${scoptVersion}")
+        compile("net.ceedubs:ficus_${scalaLibVersion}:${ficusVersion}")
+
+    	testCompile("junit:junit:${junitVersion}")
+        testCompile("com.typesafe.akka:akka-testkit_${scalaLibVersion}:${akkaVersion}")
+        testCompile("com.typesafe.akka:akka-http-testkit-experimental_${scalaLibVersion}:${akkaHttpVersion}")
+    	testCompile("org.scalatest:scalatest_${scalaLibVersion}:${scalaTestVersion}")
+
+    }
+    tasks.withType(ScalaCompile) {
+        // compile daemon + scala + useAnt seems to fail more often than not
+        // scalaCompileOptions.useAnt = false
+        scalaCompileOptions.useCompileDaemon = false
+        scalaCompileOptions.fork = true
+        scalaCompileOptions.forkOptions.jvmArgs = ['-XX:MaxPermSize=512m']
+    }
+    test {
+        minHeapSize = "1G"
+        maxHeapSize = "4G"
+        jvmArgs "-XX:MaxPermSize=1024m"
+    }
+    shadowJar {
+        baseName = project.name
+        classifier = ''
+        dependencies { exclude 'META-INF/**' }
+        append("reference.conf")
+    }
+}
+
